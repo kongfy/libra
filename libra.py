@@ -39,7 +39,7 @@ class LibraController(object):
         resp = self._q_client.list_networks()
         return [Network(self._context, network) for network in resp['networks']]
 
-    def balance(self):
+    def prepare(self):
         pools = self._get_all_pools()
         networks = self._get_all_networks()
         servers = self._get_all_servers()
@@ -69,6 +69,11 @@ class LibraController(object):
 
         for host in hosts:
             host.fetch_samples()
+
+        return (pools, networks, servers, hosts)
+
+    def balance(self):
+        pools, networks, servers, hosts = self.prepare()
 
         # run algorithm
         balancer = CPULPBalancer()
